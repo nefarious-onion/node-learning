@@ -37,12 +37,21 @@ let score = 0;
 
 app.get('/api/game/:gameName/:vote', function(req, res) {
     if (req.params.vote === 'upvote') {
-        console.log('upvote req')
+        console.log('upvote req', score);
         score++;
         res.send('you have just upvoted ' + req.params.gameName + ' to ' + score );
     } else if (req.params.vote === 'downvote') {
-        console.log('downvote req')
-        score = (score === 0) ? score : score--;
+        console.log('downvote req', score);
+        //score = (score === 0) ? score : score--;
+        //score = Math.max(0, score -1);
+        // if ( score === 0) {
+        //     score = 0;
+        // } else {
+        //     score--;
+        // }
+        if (score > 0) {
+            score--
+        };
         res.send('you have just downvoted ' + req.params.gameName + ' to ' + score );
     } else {
         res.send('Request invalid');
