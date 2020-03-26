@@ -1,16 +1,18 @@
 const express = require('express');
 
-var app = express();
+const app = express();
 
-app.get('/hello', function(req, res){
-    res.send('hello there');
-});
-app.get('/contact', function(req, res){
-    res.send('this is a contact page');
-});
-app.get('/resume', function(req, res){
-    res.send('hello, this is resume page');
-});
+app.use(express.static(__dirname + '/public'));
+
+// app.get('/hello', function(req, res){
+//     res.send('hello there');
+// });
+// app.get('/contact', function(req, res){
+//     res.send('this is a contact page');
+// });
+// app.get('/resume', function(req, res){
+//     res.send('hello, this is resume page');
+// });
 // app.get('/ab(c)?d', function(req, res){
 //     res.send('ab(c)?d');
 // });
@@ -56,6 +58,17 @@ app.get('/api/game/:gameName/:vote', function(req, res) {
     } else {
         res.send('Request invalid');
     }
+});
+
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/views/index.html');
+});
+
+app.get('/resume/download', (req, res) =>{
+    res.download(__dirname + '/public/cv.pdf');
+});
+app.get('*', (req, res) => {
+    res.status(404).sendFile(__dirname + '/views/404.html');
 });
 
 app.listen(8000, () => {
