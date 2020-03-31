@@ -5,7 +5,7 @@
         <div class="footer-header">
             <h2 class="contact-header">Say hi.</h2>
         </div>
-        <div class="footer-content light-mode-dark">
+        <div class="footer-content">
             <div class="contact-card">
                 <div class="contact-info">
                     <div class="contact-email">
@@ -20,16 +20,35 @@
 
                     </div>
                     <div class="contact-links">
-                        <a href="https://github.com/nefarious-onion"><i class="fab fa-github"></i></a>
+                        <!-- <a href="https://github.com/nefarious-onion"><i class="fab fa-github"></i></a>
                         <a href="https://www.linkedin.com/in/anne-kokkonen-b913a11a0/"><i
-                                class="fab fa-linkedin"></i></a>
+                                class="fab fa-linkedin"></i></a> -->
                         <!-- <a href="./assets//webdeveloperbootcamp_august19.pdf" download=""><i
                                 class="fas fa-file-pdf"></i></a> -->
                     </div>
                 </div>
             </div>
-            <div class="contact-img">
-            </div>
+            <!-- <div class="contact-img"> -->
+            <form class="footer__contact-form">
+                <h2 class="form__header" >Contact me</h2>
+                <div class="form__row">
+                    <label class="form__label--text" for="firstName">First name*</label>
+                    <input class="form__input--text" type="text" name="firstName" id="firstName" placeholder="First name" required>
+                </div>
+                <div class="form__row">
+                    <label class="form__label--text" for="lastName">Last name*</label>
+                    <input class="form__input--text" type="text" name="lastName" id="lastName" placeholder="Last name" equired>
+                </div>
+                <div class="form__row">
+                    <label class="form__label--text" for="email">Email*</label>
+                    <input class="form__input--text" type="email" name="email" id="email" placeholder="your@email.com" required>
+                </div>
+                <div class="form__row">
+                    <textarea class="form__textarea" name="" id="" placeholder="Your message"></textarea>
+                </div>
+                <input class="form__input--submit" type="submit" name="submit" value="Submit">
+            </form>
         </div>
     </div>
+</div>
 </div>
