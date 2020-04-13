@@ -1,0 +1,32 @@
+* {
+    margin: 0;
+    padding: 0;
+  }
+  
+  html {
+    font-size: 62.5%;
+  }
+  
+  body {
+    font-family: "Raleway", sans-serif;
+    color: #000000;
+    font-size: 1.8rem;
+    margin-top: 30px;
+    margin-left: 10px;
+  }
+  
+  input {
+    width: 400px;
+    padding: 8px 5px;
+  }
+  
+  button {
+    width: 100px;
+    padding: 8px 5px;
+  }
+  
+  img {
+    max-width: 20%;
+    max-height: 150px;
+    margin: 5px;
+  }

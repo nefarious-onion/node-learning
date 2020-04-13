@@ -1,83 +1,72 @@
 const express = require('express');
-const http = require('http');
+const PORT = process.env.PORT || 5000;
+const fetch = require('node-fetch');
 const app = express();
-const PORT = process.env.PORT || 8000;
 
-//set the filepath for express to find views-folder
-app.set('views', './src/views');
-app.set('view engine', 'ejs');
+function handleJSON(json){
+	if (!json.data) {
+		return;
+	}
 
-app.use(express.static(__dirname + '/public'));
-console.log(__dirname);
+	var result = [],
+		counter = json.data.length;
 
-app.get('/', (req, res) => {
-    res.render('pages/index');
-});
+	while(counter--){
+		try {
+			result.push(json.data[counter].images.original.url);
+		} catch {
+			console.log('An error has occurred while processing GIHPY response');
+		}	
+	}
 
-const fetchEventsData = (lang, summary) => {
-    const apiUrl = 'http://open-api.myhelsinki.fi/v1/activities/';
-    const url = (lang !== null) ? apiUrl + '?language_filter=' + lang : apiUrl;
-    console.log(url);
-
-    return new Promise((resolve, reject) => {
-        http.get(url, resp => {
-            let data = '';
-
-            resp.on('data', chunk => {
-                // collect all data to data
-                data += chunk;
-            })
-
-            // parse data when http request completed
-            resp.on('end', () => {
-                console.log('end of data received');
-                // console.log("data", data.toString());
-                // console.log("response", resp);
-                const json = JSON.parse(data.toString());
-                console.log("data", json);
-
-                if (data === '') {
-                    resolve(new Array());
-                } else {
-                    // const events = json
-                    //     .filter(event => )
-                    //     .map(event => );
-                    let final = [];
-                    resp.data.forEach(event => {
-                        if (event.info_url && event.name[lang]) {
-                            final.push({
-                                url: event.info_url,
-                                name: event.name[lang]
-                            })
-                        }
-                    })
-                    // resolve(final);
-                    resolve(events);
-                }
-            })
-        })
-            .on('error', err => {
-                console.log(err)
-                reject(err);
-            });
-    });
+	return result;
 }
 
-app.get('/api/allevents/:lang', (req, res) => {
-    fetchEventsData(req.params.lang)
-        .then(data => {
-            res.send.data;
-        })
-        .catch(err => {
-            res.send(err);
-        });
+function buildUrl(endpoint, params){
+	return endpoint + '?api_key=' + params.apiKey + '&q=' + params.searchTerm;
+}
+
+function fetchGif(apiUrl){
+	return fetch(apiUrl)
+		.then(function(resp){
+			return resp.json();
+		})
+		.then(function(json){			
+			var formattedData = handleJSON(json);
+			return formattedData;
+		})
+		.catch(function(err){
+			res.send('An error has occurred: ' + err);
+		});
+}
+
+app
+	.use(express.static(__dirname + '/public/'))
+	.listen(PORT, () => console.log(`Listening on ${PORT}`));
+
+app.get('/', function (req, res) {
+	res.sendFile(__dirname + '/views/pages/search.html');
 });
 
+app.post('/api/gif/:searchTerm', function(req, res){
+	var gifEndPoint = 'http://api.giphy.com/v1/gifs/search',
+		stickerEndPoint = 'http://api.giphy.com/v1/stickers/search',
+		params = {
+			apiKey: 'Knrw4IfKgD4zDGufUauNH0qGBdFwqfzb',
+			searchTerm: req.params.searchTerm
+		},
+		gifEndPointUrl = buildUrl(gifEndPoint, params),
+		stickerEndPointUrl = buildUrl(stickerEndPoint, params),
+		promises = [fetchGif(gifEndPointUrl), fetchGif(stickerEndPointUrl)];
 
-app.get('*', (req, res) => {
-    res.send('This page does not exist');
-});
-
-app.listen(PORT, () => {
-    console.log('Server started');
+	Promise.all(promises)
+		.then(function(resp){
+			res.send({
+				gifs: resp[0],
+				stickers: resp[1]
+			});
+		})
+		.catch(function(err){
+			res.send('An Error has occured: ' + err);
+		});
 });
