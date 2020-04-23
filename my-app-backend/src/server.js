@@ -3,6 +3,7 @@ const app = express();
 const PORT = 5000;
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const User = require('./models/User');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -11,17 +12,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 const db = mongoose.connection;
 db.on('error', (err) => { console.log(`An error has occcured while connecting to DB: ${err}`); });
 db.on('open', () => { console.log(`Connected to database. `); });
-
-const Schema = mongoose.Schema;
-const userSchema = new Schema({
-    firstname: String,
-    lastname: String,
-    username: String,
-    password: String,
-    phone: String
-});
-
-const User = mongoose.model('User', userSchema);
 
 // only logged in user should be able to reach this endpoint
 app.get('/', (req, res) => {
