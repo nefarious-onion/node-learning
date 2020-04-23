@@ -1,25 +1,56 @@
 const express = require('express');
-
 const app = express();
+const PORT = 5000;
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 
-app.use(express.static(__dirname + '/public'));
+app.use(bodyParser.urlencoded({ extended: false }));
 
-app.get('/vote', (req, res) => {
-    res.send('GET request success');
-});
-app.post('/vote', (req, res) => {
-    res.send('POST request success');
-});
-app.put('/vote/:voteId', (req, res) => {
-    res.send('PUT request success for voteID of ' + req.params.voteId);
-});
-app.delete('/vote/:voteId', (req, res) => {
-    res.send('Vote with ID of ' + req.params.voteId + ' has now been deleted');
-});
-app.get('*', (req, res) => {
-    res.status(405).end();
+//mongoose.connect('mongodb://localhost:27017/test');
+
+const db = mongoose.connection;
+db.on('error', (err) => { console.log(`An error has occcured while connecting to DB: ${err}`); });
+db.on('open', () => { console.log(`Connected to database. `); });
+
+const Schema = mongoose.Schema;
+const userSchema = new Schema({
+    firstname: String,
+    lastname: String,
+    username: String,
+    password: String,
+    phone: String
 });
 
-app.listen(8000, () => {
-    console.log('Server started');
+const User = mongoose.model('User', userSchema);
+
+// only logged in user should be able to reach this endpoint
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/api/views/index.html');
+});
+
+app.get('/login', (req, res) => {
+    res.sendFile(__dirname + '/api/views/login.html');
+});
+
+app.post('/login/send', (req, res) => {
+    // Add the logic to authenticate user
+});
+
+app.get('/register', (req, res) => {
+    res.sendFile(__dirname + '/api/views/register.html');
+});
+
+app.post('/register/send', (req, res) => {
+    let newUser = new User();
+    newUser.firstname = req.body.firstName;
+    newUser.lastname = req.body.lastName;
+    newUser.username = req.body.username;
+    newUser.password = req.body.password;
+    newUser.phone = req.body.phone;
+
+    console.log(newUser);
+});
+
+app.listen(PORT, () => {
+    console.log(`Listening on port ${PORT}`);
 });
